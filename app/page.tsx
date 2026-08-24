@@ -1,15 +1,23 @@
-"use client";
-
 import Header from "@/components/Header";
+import HomeTree from "@/components/HomeTree";
 import Sidebar from "@/components/Sidebar";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { ScreenProvider, useScreen } from "@/lib/ScreenProvider";
 import Assignments from "@/lib/screens/Assignment";
 import Courses from "@/lib/screens/Courses";
 import Dashboard from "@/lib/screens/Dashboard";
 import LiveClasses from "@/lib/screens/LiveClasses";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const user = await getAuthenticatedUser();
+  console.log("this line in main page is reashed");
+
+  // if (!user) {
+  //   redirect("/login");
+  // }
+
   return (
     <ScreenProvider>
       <Sidebar />
@@ -18,32 +26,5 @@ export default function Home() {
         <HomeTree />
       </div>
     </ScreenProvider>
-  );
-}
-
-function HomeTree() {
-  const { activeScreen } = useScreen();
-  return (
-    <main className="flex-1 overflow-auto py-7 md:px-8 lg:px-10">
-      {activeScreen === "dashboard" ? (
-        <Dashboard />
-      ) : // <h1>Dashboard</h1>
-      activeScreen === "courses" ? (
-        <Courses />
-      ) : // <h1>Courses</h1>
-      activeScreen === "lessons" ? (
-        // <Lessons />
-        <h1>Lesson</h1>
-      ) : activeScreen === "assignments" ? (
-        <Assignments />
-      ) : // <h1>Assignment</h1>
-      activeScreen === "live-classes" ? (
-        <LiveClasses />
-      ) : (
-        // <h1>LIve classes</h1>
-        // <People />
-        <h1>People</h1>
-      )}
-    </main>
   );
 }
