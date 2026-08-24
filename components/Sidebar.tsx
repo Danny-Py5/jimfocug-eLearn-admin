@@ -11,6 +11,7 @@ import {
 import Button from "./Button";
 import { useScreen } from "@/lib/ScreenProvider";
 import Image from "next/image";
+import JimfocugLogo from "./JimfocugLogo";
 
 export default function Sidebar() {
   const { activeScreen, setActiveScreen } = useScreen();
@@ -26,17 +27,7 @@ export default function Sidebar() {
   return (
     <aside className="hidden w-56 min-h-full shrink-0 border-r bg-card  lg:flex lg:flex-col">
       <div className="flex h-18 items-center gap-3 border-b px-5">
-        <div
-          className="flex items-center justify-center rounded-lg p-2
-         bg-black "
-        >
-          <Image
-            src={"/jimfocug-logo-1.png"}
-            alt="company logo"
-            width={25}
-            height={25}
-          />
-        </div>
+        <JimfocugLogo />
         <div>
           <p className="font-bold">Jimfocug</p>
           <p className="text-[10px] font-bold tracking-widest text-primary">
