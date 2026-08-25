@@ -6,8 +6,8 @@ import {
   LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useUser } from "../providers/UserProvider";
-import { capitalizeEachWord, getGreeting } from "../utils";
+import { useUser } from "../../lib/providers/UserProvider";
+import { capitalizeEachWord, getGreeting } from "../../lib/utils";
 
 const metrics = {
   totalCourses: 24,

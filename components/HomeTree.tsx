@@ -1,10 +1,10 @@
 "use client";
 
 import { useScreen } from "@/lib/providers/ScreenProvider";
-import Assignments from "@/lib/screens/Assignment";
-import Courses from "@/lib/screens/Courses";
-import Dashboard from "@/lib/screens/Dashboard";
-import LiveClasses from "@/lib/screens/LiveClasses";
+import Assignments from "@/components/screens/Assignment";
+import Courses from "@/components/screens/Courses";
+import Dashboard from "@/components/screens/Dashboard";
+import LiveClasses from "@/components/screens/LiveClasses";
 
 export default function HomeTree() {
   const { activeScreen } = useScreen();
