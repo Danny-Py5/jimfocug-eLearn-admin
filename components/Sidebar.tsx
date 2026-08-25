@@ -12,9 +12,13 @@ import Button from "./Button";
 import { useScreen } from "@/lib/ScreenProvider";
 import Image from "next/image";
 import JimfocugLogo from "./JimfocugLogo";
+import Modal from "./Modal";
+import { useState } from "react";
 
 export default function Sidebar() {
   const { activeScreen, setActiveScreen } = useScreen();
+  const [showLogOutModal, setShowLogoutModal] = useState(false);
+
   const nav = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "courses", label: "Course Approvals", icon: FileText, badge: 12 },
@@ -26,6 +30,12 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden w-56 min-h-full shrink-0 border-r bg-card  lg:flex lg:flex-col">
+      {showLogOutModal && (
+        <Modal title={"Hey"} onClose={() => setShowLogoutModal(false)}>
+          <p>Hey</p>
+        </Modal>
+      )}
+
       <div className="flex h-18 items-center gap-3 border-b px-5">
         <JimfocugLogo />
         <div>
@@ -54,10 +64,15 @@ export default function Sidebar() {
         ))}
       </nav>
       <div className="mt-auto border-t p-4">
-        <button className="flex items-center gap-3 px-2 py-2 text-xs text-muted-foreground">
+        <Button
+          onClick={() => {
+            setShowLogoutModal(true);
+          }}
+          className="flex items-center gap-3 px-2 py-2 text-xs text-muted-foreground"
+        >
           <UserRound className="size-4" />
           Logout
-        </button>
+        </Button>
       </div>
     </aside>
   );
