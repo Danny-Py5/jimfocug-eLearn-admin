@@ -27,7 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-row  max-w-[1500] ">
         <Toaster position="top-right" richColors />
-        <AuthGuard>{children}</AuthGuard>
+        {children}
       </body>
     </html>
   );

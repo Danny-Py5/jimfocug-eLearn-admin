@@ -22,7 +22,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
           const refreshResponse = await fetch("/api/auth/refresh-token", {
             method: "POST",
+            credentials: "include",
           });
+
           if (!refreshResponse.ok) {
             router.replace("/login");
             return;
@@ -41,13 +43,13 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
           return;
         }
 
+        // Authentication succeeded
         setIsLoading(false);
+
         console.log(await response.json());
-      } catch (e) {
-        console.log("Authentication error", e);
+      } catch (error) {
+        console.error("Authentication error:", error);
         router.replace("/login");
-      } finally {
-        setIsLoading(false);
       }
     }
 
@@ -56,7 +58,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center w-screen">
+      <div className="flex min-h-screen w-screen items-center justify-center">
         <JimfocugLogo />
         Loading...
       </div>
