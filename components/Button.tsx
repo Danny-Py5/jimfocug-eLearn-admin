@@ -15,7 +15,8 @@ export default function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`cursor-pointer ${className}`}
+      className={`cursor-pointer 
+         ${className}`}
     >
       {children}
     </button>

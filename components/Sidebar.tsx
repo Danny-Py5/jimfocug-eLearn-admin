@@ -2,6 +2,7 @@
 import {
   FileText,
   LayoutDashboard,
+  LogOut,
   PlayCircle,
   Sparkles,
   UserRound,
@@ -14,10 +15,38 @@ import Image from "next/image";
 import JimfocugLogo from "./JimfocugLogo";
 import Modal from "./Modal";
 import { useState } from "react";
+import { interceptorFetch } from "@/lib/interceptor-fetch";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Sidebar() {
+  const router = useRouter();
   const { activeScreen, setActiveScreen } = useScreen();
   const [showLogOutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      const response = await interceptorFetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        toast.error("Logout fail!");
+        console.error(
+          "Logout failed....",
+          // await response.clone().json(),
+        );
+        return;
+      }
+      toast.success("Logout successful!");
+      router.replace("/login");
+    } catch (error) {
+      toast.error("Logout fail!");
+      console.error("Logout error:", error);
+    } finally {
+      setShowLogoutModal(false);
+    }
+  };
 
   const nav = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -31,8 +60,24 @@ export default function Sidebar() {
   return (
     <aside className="hidden w-56 min-h-full shrink-0 border-r bg-card  lg:flex lg:flex-col">
       {showLogOutModal && (
-        <Modal title={"Hey"} onClose={() => setShowLogoutModal(false)}>
-          <p>Hey</p>
+        <Modal title="Logout" onClose={() => setShowLogoutModal(false)}>
+          <p>Are you sure you want to logout?</p>
+
+          <div className="flex justify-end gap-3 mt-6 border-t border-border/50 pt-6">
+            <Button
+              className="rounded-lg border-2 border-border bg-background p-3 text-foreground transition-all duration-200 hover:border-muted-foreground/30 hover:bg-muted/80"
+              onClick={() => setShowLogoutModal(false)}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              className="rounded-lg bg-red-600 p-3 text-white transition-all duration-200 hover:bg-red-700 hover:shadow-lg hover:shadow-red-600/25 active:scale-[0.97]"
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          </div>
         </Modal>
       )}
 
