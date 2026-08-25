@@ -1,3 +1,5 @@
+import { CourseCategory, CourseStatus } from "./enums";
+
 export interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
@@ -56,4 +58,69 @@ export interface UserRegister {
   email: string;
   phoneNumber: string;
   password: string;
+}
+
+//   course
+
+export interface Module {
+  _id?: string;
+  weekNumber: number;
+  title: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface WhatYouWillLearn {
+  _id?: string;
+  text: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CourseReview {
+  _id?: string;
+  user: string;
+}
+
+export interface CourseInstructor {
+  _id: string;
+  username: string;
+  fullName: string;
+  email: string;
+  profilePictureUrl: string;
+}
+
+export interface Course {
+  _id: string;
+
+  title: string;
+  description: string;
+  category: CourseCategory;
+  price: number;
+
+  imageUrl: string;
+  imagePublicId: string;
+
+  instructor?: string | CourseInstructor;
+
+  freeAccessWeeks: number;
+
+  modules: Module[];
+  whatYouWillLearn: WhatYouWillLearn[];
+
+  rating: number;
+  numReviews: number;
+
+  videoCount: number;
+  assignmentCount: number;
+  enrolledCount: number;
+  liveClassCount: number;
+
+  status: CourseStatus;
+  rejectionReason: string | null;
+
+  reviews: CourseReview[];
+
+  createdAt: string;
+  updatedAt: string;
 }

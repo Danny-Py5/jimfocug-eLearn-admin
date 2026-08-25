@@ -4,10 +4,13 @@ import {
   UserRound,
   WalletCards,
   LucideIcon,
+  Copy,
 } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "../../lib/providers/UserProvider";
 import { capitalizeEachWord, getGreeting } from "../../lib/utils";
+import { toast } from "sonner";
+import { useCourses } from "@/lib/providers/CourseProvider";
 
 const metrics = {
   totalCourses: 24,
@@ -195,6 +198,7 @@ function Status({ value }: { value: string }) {
 
 export default function Dashboard() {
   const { user } = useUser();
+  const { courses } = useCourses();
 
   if (!user) return <div>Error: User not found</div>;
 
@@ -205,8 +209,23 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold tracking-tight">
             {getGreeting()}, {capitalizeEachWord(user.fullName)}
           </h1>
+          <div className="flex items-center gap-2 mb-2">
+            <small className="text-muted-foreground">ID: {user.id}</small>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(user.id);
+                toast.success("ID copied!");
+              }}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Copy className="size-3.5" />
+            </button>
+          </div>
           <p className="mt-1 text-xs text-muted-foreground">
             Here&apos;s what is happening on Jimfocug E-Learning today.
+            <small>
+              cOurse totallllllllll................... {courses.length}
+            </small>
           </p>
           {/* <Link href={"/courses/courseId"}> GO course description page</Link> */}
         </div>

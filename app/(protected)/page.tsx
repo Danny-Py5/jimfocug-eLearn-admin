@@ -1,18 +1,22 @@
+"use client";
 import Header from "@/components/Header";
 import HomeTree from "@/components/HomeTree";
 import Sidebar from "@/components/Sidebar";
-import AuthGuard from "@/components/AuthGuard";
+// import AuthGuard from "@/components/AuthGuard";
 import { ScreenProvider } from "@/lib/providers/ScreenProvider";
+import { CourseProvider } from "@/lib/providers/CourseProvider";
 
 export default function Home() {
   return (
-    <ScreenProvider>
-      <Sidebar />
+    <CourseProvider>
+      <ScreenProvider>
+        <Sidebar />
 
-      <div className="flex-1">
-        <Header />
-        <HomeTree />
-      </div>
-    </ScreenProvider>
+        <div className="flex-1">
+          <Header />
+          <HomeTree />
+        </div>
+      </ScreenProvider>
+    </CourseProvider>
   );
 }
