@@ -37,7 +37,7 @@ export default function LoginScreen() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "Invalid userName or password");
+        setError(data.msg || "Invalid userName or password");
         return;
       }
       console.log({ data });
