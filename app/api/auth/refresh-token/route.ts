@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
-    const { refreshToken } = await request.json();
-
-    // console.log({ refreshToken });
+    const cookieStore = await cookies();
+    const refreshToken = cookieStore.get("refreshToken")?.value;
 
     if (!refreshToken) {
       return NextResponse.json(
