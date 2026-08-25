@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-
+import jwt from "jsonwebtoken";
 import type { LoginAPIResponse } from "@/types";
 
 export async function POST(request: Request) {
@@ -23,6 +23,16 @@ export async function POST(request: Request) {
       return NextResponse.json(data, {
         status: response.status,
       });
+    }
+
+    const decodedToken = jwt.decode(data.accessToken) as {
+      role: string;
+    };
+    if (decodedToken.role !== "admin") {
+      return NextResponse.json(
+        { msg: "You are not authorized to access the admin panel." },
+        { status: 403 },
+      );
     }
 
     const nextResponse = NextResponse.json({
