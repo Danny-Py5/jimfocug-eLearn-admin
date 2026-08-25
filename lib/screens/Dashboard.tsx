@@ -6,6 +6,8 @@ import {
   LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useUser } from "../providers/UserProvider";
+import { capitalizeEachWord, getGreeting } from "../utils";
 
 const metrics = {
   totalCourses: 24,
@@ -192,12 +194,16 @@ function Status({ value }: { value: string }) {
 }
 
 export default function Dashboard() {
+  const { user } = useUser();
+
+  if (!user) return <div>Error: User not found</div>;
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Good Morning, Victory
+            {getGreeting()}, {capitalizeEachWord(user.fullName)}
           </h1>
           <p className="mt-1 text-xs text-muted-foreground">
             Here&apos;s what is happening on Jimfocug E-Learning today.

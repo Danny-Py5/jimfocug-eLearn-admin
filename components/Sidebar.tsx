@@ -10,7 +10,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import Button from "./Button";
-import { useScreen } from "@/lib/ScreenProvider";
+import { useScreen } from "@/lib/providers/ScreenProvider";
 import Image from "next/image";
 import JimfocugLogo from "./JimfocugLogo";
 import Modal from "./Modal";

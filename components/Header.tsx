@@ -1,7 +1,15 @@
+"use client";
+
 import { Bell, ChevronDown, Search } from "lucide-react";
 import Avatar from "./Avatar";
+import { useUser } from "@/lib/providers/UserProvider";
+import { capitalizeEachWord } from "@/lib/utils";
 
 export default function Header() {
+  const { user } = useUser();
+  if (!user) {
+    return <></>;
+  }
   return (
     <header className="flex h-18 items-center justify-between border-b bg-card px-5 md:px-8">
       <div className="relative hidden md:block">
@@ -14,10 +22,12 @@ export default function Header() {
       <div className="flex items-center gap-4">
         <Bell className="size-4 text-muted-foreground" />
         <div className="h-6 w-px bg-border" />
-        <Avatar name="Paul Chukwurindu Victory" />
+        <Avatar name={`${user.fullName.toUpperCase()}`} />
         <div className="hidden sm:block">
-          <p className="font-semibold">Paul Chukwurindu Victory</p>
-          <p className="text-[10px] text-muted-foreground">Platform Director</p>
+          <p className="font-semibold">{capitalizeEachWord(user.fullName)}</p>
+          <p className="text-[10px] text-teal-300">
+            {user.role.toUpperCase()} USER
+          </p>
         </div>
         <ChevronDown className="size-3 text-muted-foreground" />
       </div>

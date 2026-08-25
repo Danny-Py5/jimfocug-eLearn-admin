@@ -1,6 +1,6 @@
 "use client";
 
-import { useScreen } from "@/lib/ScreenProvider";
+import { useScreen } from "@/lib/providers/ScreenProvider";
 import Assignments from "@/lib/screens/Assignment";
 import Courses from "@/lib/screens/Courses";
 import Dashboard from "@/lib/screens/Dashboard";

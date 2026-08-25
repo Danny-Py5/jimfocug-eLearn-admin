@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import JimfocugLogo from "./JimfocugLogo";
+import { useUser } from "@/lib/providers/UserProvider";
+import { User } from "@/types";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+
+  const { setUser } = useUser();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,8 +49,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
         // Authentication succeeded
         setIsLoading(false);
-
-        console.log(await response.json());
+        const { user }: { user: User } = await response.json();
+        setUser(user);
+        console.log();
       } catch (error) {
         console.error("Authentication error:", error);
         router.replace("/login");
