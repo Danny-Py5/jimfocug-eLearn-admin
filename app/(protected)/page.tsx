@@ -1,7 +1,7 @@
 "use client";
 import Header from "@/components/Header";
 import HomeTree from "@/components/HomeTree";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 // import AuthGuard from "@/components/AuthGuard";
 import { ScreenProvider } from "@/lib/providers/ScreenProvider";
 import { CourseProvider } from "@/lib/providers/CourseProvider";
