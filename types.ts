@@ -101,7 +101,7 @@ export interface Course {
   imageUrl: string;
   imagePublicId: string;
 
-  instructor?: string | CourseInstructor;
+  instructor: CourseInstructor;
 
   freeAccessWeeks: number;
 
@@ -123,4 +123,34 @@ export interface Course {
 
   createdAt: string;
   updatedAt: string;
+}
+
+// dashboard stats
+export interface DashboardStats {
+  summary: {
+    totalCourses: number;
+    totalStudents: number;
+    activeTutors: number;
+    monthlyRevenue: number;
+  };
+
+  growth: {
+    courses: number;
+    students: number;
+    tutors: number;
+    revenue: number;
+  };
+
+  enrollmentTrends: {
+    year: number;
+    month: number;
+    monthName: string;
+    count: number;
+  }[];
+
+  categoryDistribution: {
+    category: string;
+    count: number;
+    percentage: number;
+  }[];
 }

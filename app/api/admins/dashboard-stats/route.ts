@@ -15,7 +15,7 @@ export async function GET() {
     }
 
     const response = await fetch(
-      `${process.env.BACKEND_URL}/api/v1/courses/admin`,
+      `${process.env.BACKEND_URL}/api/v1/admins/dashboard/stats`,
       {
         method: "GET",
         headers: {
@@ -34,11 +34,11 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Get courses error:", error);
+    console.error("Get dashboard stats error:", error);
 
     return NextResponse.json(
       {
-        msg: "Failed to fetch courses",
+        msg: "Failed to fetch dashboard stats",
         error: error instanceof Error ? error.message : String(error),
       },
       { status: 500 },
