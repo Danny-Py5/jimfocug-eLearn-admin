@@ -320,7 +320,7 @@ export default function Courses() {
                 Course
               </p>
               <p className="mt-1 text-sm font-semibold text-primary">
-                {courseActionStats.courseTitle}
+                {capitalizeEachWord(courseActionStats.courseTitle)}
               </p>
             </div>
 
