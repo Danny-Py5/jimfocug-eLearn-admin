@@ -8,17 +8,23 @@ import { useCourses } from "@/lib/providers/CourseProvider";
 import { useMemo, useState } from "react";
 import { useUser } from "@/lib/providers/UserProvider";
 import Button from "../Button";
+import { toast } from "sonner";
+import { CourseCategory, CourseStatus } from "@/enums";
+import { capitalizeEachWord } from "@/lib/utils";
 
 export default function Courses() {
   const { courses } = useCourses();
+
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+
   const [filters, setFilters] = useState({
     query: "",
-    category: "All Categories",
-    status: "All",
+    category: CourseCategory.ALL,
+    status: CourseStatus.ALL,
   });
   const user = useUser();
   const [page, setPage] = useState(1);
-  const [modal, setModal] = useState(false);
+  // const [modal, setModal] = useState(false);
   const filtered = useMemo(
     () =>
       courses.filter(
@@ -26,10 +32,9 @@ export default function Courses() {
           `${c.title} ${c._id} ${c.instructor.fullName}`
             .toLowerCase()
             .includes(filters.query.toLowerCase()) &&
-          (filters.category === "All Categories" ||
+          (filters.category === CourseCategory.ALL ||
             c.category === filters.category) &&
-          (filters.status === "All" ||
-            c.status === filters.status.toLowerCase()),
+          (filters.status === CourseStatus.ALL || c.status === filters.status),
       ),
     [courses, filters],
   );
@@ -40,21 +45,23 @@ export default function Courses() {
         title="All Courses"
         description="Manage and filter active courses on your platform."
         action="Add Course"
-        onAction={() => setModal(true)}
+        onAction={() => {
+          toast.info("Not implemented contact the Developer");
+        }}
         exportData={courses}
       />
       <div className="mt-5">
         <FilterBar
           type="courses"
-          onChange={(query, category, status) => {
+          onChange={(query, category: CourseCategory, status: CourseStatus) => {
             setFilters({ query, category, status });
             setPage(1);
           }}
           onClear={() => {
             setFilters({
               query: "",
-              category: "All Categories",
-              status: "All",
+              category: CourseCategory.ALL,
+              status: CourseStatus.ALL,
             });
             setPage(1);
           }}
@@ -82,10 +89,10 @@ export default function Courses() {
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Avatar name={c.title} />
+                      <Avatar name={capitalizeEachWord(c.title)} />
                       <div>
                         <p className="max-w-48 truncate font-semibold">
-                          {c.title}
+                          {capitalizeEachWord(c.title)}
                         </p>
                         <p className="text-[9px] text-muted-foreground">
                           ID: {c._id}
@@ -93,14 +100,18 @@ export default function Courses() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-2 py-3">{c.instructor.fullName}</td>
+                  <td className="px-2 py-3">
+                    {capitalizeEachWord(c.instructor.fullName)}
+                  </td>
                   <td className="px-2 py-3">
                     <span className="rounded-full bg-muted px-2 py-1">
-                      {c.category}
+                      {capitalizeEachWord(c.category)}
                     </span>
                   </td>
                   <td className="px-2 py-3">
-                    {user.user?.username + " lol...."}
+                    {user.user
+                      ? capitalizeEachWord(user.user?.username)
+                      : "User"}
                   </td>
                   <td className="px-2 py-3 font-semibold">
                     ★ {c.rating} ({c.rating})
@@ -109,31 +120,60 @@ export default function Courses() {
                     <Status value={c.status} />
                   </td>
                   <td className="px-4 py-3">
-                    <details className="relative">
-                      <summary className="list-none cursor-pointer">
+                    <div className="absolute">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenMenu(openMenu === c._id ? null : c._id)
+                        }
+                        className="rounded-md p-1 hover:bg-muted"
+                      >
                         <MoreVertical className="size-3.5 text-muted-foreground" />
-                      </summary>
-                      <div className="absolute right-0 z-10 flex w-28 flex-col rounded-lg border bg-card p-1 shadow-lg">
-                        <Button
-                          // onClick={() => updateCourseStatus(c.id, "published")}
-                          className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
-                        >
-                          Publish
-                        </Button>
-                        <Button
-                          // onClick={() => updateCourseStatus(c.id, "pending")}
-                          className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
-                        >
-                          Mark pending
-                        </Button>
-                        <Button
-                          // onClick={() => updateCourseStatus(c.id, "archived")}
-                          className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
-                        >
-                          Archive
-                        </Button>
-                      </div>
-                    </details>
+                      </button>
+
+                      {openMenu === c._id && (
+                        <>
+                          {/* Click outside */}
+                          <div
+                            className="fixed inset-0 z-10"
+                            onClick={() => setOpenMenu(null)}
+                          />
+
+                          {/* Menu */}
+                          <div className="absolute right-0 z-20 mt-1 flex w-32 flex-col rounded-lg border bg-card p-1 shadow-lg">
+                            <Button
+                              onClick={() => {
+                                console.log("Publish", c._id);
+                                setOpenMenu(null);
+                              }}
+                              className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
+                            >
+                              Publish
+                            </Button>
+
+                            <Button
+                              onClick={() => {
+                                console.log("Mark pending", c._id);
+                                setOpenMenu(null);
+                              }}
+                              className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
+                            >
+                              Mark pending
+                            </Button>
+
+                            <Button
+                              onClick={() => {
+                                console.log("Reject", c._id);
+                                setOpenMenu(null);
+                              }}
+                              className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
+                            >
+                              Reject
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

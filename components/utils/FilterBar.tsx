@@ -1,3 +1,5 @@
+import { CourseCategory, CourseStatus } from "@/enums";
+import { capitalizeEachWord } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
@@ -8,17 +10,32 @@ export default function FilterBar({
 }: {
   type: "courses" | "people";
   onClear: () => void;
-  onChange: (query: string, category: string, status: string) => void;
+  onChange: (
+    query: string,
+    category: CourseCategory,
+    status: CourseStatus,
+  ) => void;
 }) {
   const [q, setQ] = useState("");
-  const [category, setCategory] = useState("All Categories");
-  const [status, setStatus] = useState("All");
-  const update = (next: { q?: string; category?: string; status?: string }) => {
-    const values = { q, ...next };
-    if (values.q !== undefined) setQ(values.q);
-    if (values.category !== undefined) setCategory(values.category);
-    if (values.status !== undefined) setStatus(values.status);
-    onChange(values.q, values.category as string, values.status as string);
+  const [category, setCategory] = useState(CourseCategory.ALL);
+  const [status, setStatus] = useState(CourseStatus.ALL);
+  const update = (next: {
+    q?: string;
+    category?: CourseCategory;
+    status?: CourseStatus;
+  }) => {
+    const values = {
+      q,
+      category,
+      status,
+      ...next,
+    };
+
+    setQ(values.q);
+    setCategory(values.category);
+    setStatus(values.status);
+
+    onChange(values.q, values.category, values.status);
   };
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-card p-2">
@@ -39,36 +56,49 @@ export default function FilterBar({
         <select
           aria-label="Category"
           value={category}
-          onChange={(e) => update({ category: e.target.value })}
-          className="h-9 rounded-lg border bg-background px-3 text-[10px] text-muted-foreground"
+          onChange={(e) =>
+            update({ category: e.target.value as CourseCategory })
+          }
+          className="h-9 cursor-pointer rounded-lg border bg-background px-3 text-[10px] text-muted-foreground"
         >
-          {[
-            "All Categories",
-            "Development",
-            "Data Science",
-            "Design",
-            "Business",
-          ].map((o) => (
-            <option key={o}>{o}</option>
+          {Object.values(CourseCategory).map((o) => (
+            <option key={o} value={o}>
+              {o === CourseCategory.ALL
+                ? "All Levels"
+                : capitalizeEachWord(o.replace("_", " "))}
+            </option>
           ))}
         </select>
       )}
       <select
         aria-label="Status"
         value={status}
-        onChange={(e) => update({ status: e.target.value })}
-        className="h-9 rounded-lg border bg-background px-3 text-[10px] text-muted-foreground"
+        onChange={(e) => update({ status: e.target.value as CourseStatus })}
+        className="h-9 cursor-pointer rounded-lg border bg-background px-3 text-[10px] text-muted-foreground"
       >
-        {["All", "Published", "Pending", "Draft", "Archived"].map((o) => (
-          <option key={o}>{o}</option>
+        {Object.values(CourseStatus).map((o) => (
+          <option key={o} value={o}>
+            {capitalizeEachWord(o.replace("_", " "))}
+          </option>
         ))}
       </select>
-      {type === "courses" && <Select label="Year" options={["2026", "2025"]} />}
+      {/* {type === "courses" && (
+        <select
+          aria-label="Year"
+          className="h-9 rounded-lg border bg-background px-3 text-[10px] text-muted-foreground"
+        >
+          {["2026", "2025"].map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      )} */}
       <button
         onClick={() => {
           setQ("");
-          setCategory("All Categories");
-          setStatus("All");
+          setCategory(CourseCategory.ALL);
+          setStatus(CourseStatus.ALL);
           onClear();
         }}
         className="px-2 text-[10px] font-semibold text-destructive"
@@ -76,18 +106,5 @@ export default function FilterBar({
         Clear All
       </button>
     </div>
-  );
-}
-
-function Select({ label, options }: { label: string; options: string[] }) {
-  return (
-    <select
-      aria-label={label}
-      className="h-9 rounded-lg border bg-background px-3 text-[10px] text-muted-foreground"
-    >
-      {options.map((o) => (
-        <option key={o}>{o}</option>
-      ))}
-    </select>
   );
 }
