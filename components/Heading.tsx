@@ -29,6 +29,7 @@ export default function Heading({
           Export All
         </Button>
         <Button
+          isDefault={true}
           onClick={onAction}
           className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[11px] font-semibold text-primary-foreground"
         >

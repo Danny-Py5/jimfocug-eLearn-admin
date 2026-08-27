@@ -1,3 +1,5 @@
+import Button from "../Button";
+
 export default function Pager({
   page,
   setPage,
@@ -20,29 +22,31 @@ export default function Pager({
         records
       </span>
       <div className="flex items-center gap-1">
-        <button
+        <Button
+          isDefault={true}
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
           className="rounded-md border px-2 py-1.5 disabled:opacity-40"
         >
           Prev
-        </button>
+        </Button>
         {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
-          <button
+          <Button
             key={n}
             onClick={() => setPage(n)}
             className={`rounded-md border px-2.5 py-1.5 ${page === n ? "bg-primary text-primary-foreground" : ""}`}
           >
             {n}
-          </button>
+          </Button>
         ))}
-        <button
+        <Button
           disabled={page === pages}
+          isDefault={true}
           onClick={() => setPage(page + 1)}
           className="rounded-md border px-2 py-1.5 disabled:opacity-40"
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

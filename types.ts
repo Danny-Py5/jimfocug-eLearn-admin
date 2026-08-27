@@ -2,6 +2,7 @@ import { CourseCategory, CourseStatus } from "./enums";
 
 export interface ButtonProps {
   children: React.ReactNode;
+  isDefault?: boolean;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
