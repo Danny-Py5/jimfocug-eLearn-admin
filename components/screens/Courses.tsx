@@ -11,6 +11,7 @@ import Button from "../Button";
 import { toast } from "sonner";
 import { CourseCategory, CourseStatus } from "@/enums";
 import { capitalizeEachWord } from "@/lib/utils";
+import { Course } from "@/types";
 
 export default function Courses() {
   const { courses } = useCourses();
@@ -75,8 +76,8 @@ export default function Courses() {
                 <th className="px-4 py-3">Course Title & Details</th>
                 <th className="px-2 py-3">Tutor</th>
                 <th className="px-2 py-3">Category</th>
-                <th className="px-2 py-3">Students</th>
-                <th className="px-2 py-3">Rating</th>
+                <th className="px-2 py-3">Enrolled Total</th>
+                <th className="px-2 py-3">Resources</th>
                 <th className="px-2 py-3">Status</th>
                 <th className="px-4 py-3">Actions</th>
               </tr>
@@ -109,12 +110,11 @@ export default function Courses() {
                     </span>
                   </td>
                   <td className="px-2 py-3">
-                    {user.user
-                      ? capitalizeEachWord(user.user?.username)
-                      : "User"}
+                    {c.enrolledCount}{" "}
+                    {c.enrolledCount < 2 ? "Student" : "Students"}
                   </td>
                   <td className="px-2 py-3 font-semibold">
-                    ★ {c.rating} ({c.rating})
+                    {computeCourseResources(c)}
                   </td>
                   <td className="px-2 py-3">
                     <Status value={c.status} />
@@ -185,6 +185,13 @@ export default function Courses() {
       {/* {modal && <AddCourse onClose={() => setModal(false)} />} */}
     </>
   );
+}
+
+function computeCourseResources(c: Course) {
+  const totalResources = c.videoCount + c.liveClassCount + c.assignmentCount;
+  return totalResources < 2
+    ? totalResources + " Resource"
+    : totalResources + " Resources";
 }
 
 // function AddCourse({ onClose }: { onClose: () => void }) {
