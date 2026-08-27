@@ -30,6 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-row">
         <Toaster position="top-right" richColors />
+        {/* user provider is empty by default... set when auth.me is successful */}
         <UserProvider>{children}</UserProvider>
       </body>
     </html>

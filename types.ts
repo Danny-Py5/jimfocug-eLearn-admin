@@ -32,6 +32,7 @@ export interface PurchasedCourse {
 }
 
 export interface User {
+  _id: string;
   id: string;
   username: string;
   fullName: string;
@@ -46,6 +47,7 @@ export interface User {
   refreshToken?: string;
   createdAt: string;
   updatedAt: string;
+  status: string;
 }
 
 export interface UserLogin {

@@ -8,10 +8,11 @@ import LiveClasses from "@/components/screens/LiveClasses";
 import { useCourses } from "@/lib/providers/CourseProvider";
 import { DashboardShimmerCard } from "./DashboardShimmerCard";
 import ErrorComponent from "./ErrorComponent";
+import Users from "./screens/Users";
 
 export default function HomeTree() {
   const { activeScreen } = useScreen();
-  const { courses, isLoading, error, refetchCourses } = useCourses();
+  const { isLoading, error, refetchCourses } = useCourses();
 
   if (isLoading) {
     return <DashboardShimmerCard />;
@@ -44,7 +45,7 @@ export default function HomeTree() {
       ) : (
         // <h1>LIve classes</h1>
         // <People />
-        <h1>People</h1>
+        <Users />
       )}
     </main>
   );
