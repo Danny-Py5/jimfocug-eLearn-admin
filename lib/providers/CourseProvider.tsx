@@ -8,6 +8,7 @@ interface CourseContextType {
   courses: Course[];
   isLoading: boolean;
   error: string | null;
+  setCourses: React.Dispatch<React.SetStateAction<Course[]>>;
   refetchCourses: () => Promise<void>;
 }
 
@@ -52,6 +53,7 @@ export function CourseProvider({ children }: { children: React.ReactNode }) {
   return (
     <CourseContext.Provider
       value={{
+        setCourses,
         courses,
         isLoading,
         error,

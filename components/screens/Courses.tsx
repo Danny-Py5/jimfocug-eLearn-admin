@@ -13,6 +13,7 @@ import { CourseAction, CourseCategory, CourseStatus } from "@/enums";
 import { capitalizeEachWord } from "@/lib/utils";
 import { Course } from "@/types";
 import Modal from "../Modal";
+import { interceptorFetch } from "@/lib/interceptor-fetch";
 
 interface ICourseActionStats {
   id: string;
@@ -24,7 +25,7 @@ interface ICourseActionStats {
   isMarkingPending: boolean;
 }
 export default function Courses() {
-  const { courses } = useCourses();
+  const { courses, setCourses } = useCourses();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const [wantToReject, setWantToReject] = useState<boolean>();
@@ -65,14 +66,52 @@ export default function Courses() {
   const handleCourseAction = async (action: ICourseActionStats) => {
     // Simulate API request
     console.log(action);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    toast.success(
-      `${action.courseTitle} ${action.action.replace("_", " ")} successful`,
-    );
+    try {
+      const response = await interceptorFetch("/api/courses", {
+        method: "PATCH",
+        body: JSON.stringify({
+          status: action.action,
+          rejectionReason: action.rejectionReason,
+          id: action.id,
+        }),
+      });
 
-    resetCourseActionStats();
-    setOpenMenu(null);
+      // Check if response is ok
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+        toast.error(errorData.msg || "Something went wrong");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+      setCourses(() => {
+        return courses.map((course) => {
+          if (course._id === action.id) {
+            const courseStatusRestructure =
+              action.action === CourseAction.MARK_PENDING
+                ? CourseStatus.PENDING_REVIEW
+                : action.action === CourseAction.PUBLISH
+                  ? CourseStatus.APPROVED
+                  : CourseStatus.REJECTED;
+            course.status = courseStatusRestructure;
+            return course;
+          }
+          return course;
+        });
+      });
+      toast.success(
+        `${action.courseTitle} ${action.action.replace("_", " ")} successful`,
+      );
+    } catch (e) {
+      console.log("Request failed:", e);
+      toast.error("Request failed");
+    } finally {
+      resetCourseActionStats();
+      setOpenMenu(null);
+    }
   };
 
   const resetCourseActionStats = () => {
