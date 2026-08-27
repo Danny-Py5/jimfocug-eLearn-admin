@@ -70,7 +70,7 @@ export default function Courses() {
       </div>
       <div className="mt-5 overflow-hidden rounded-xl border bg-card">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[780px] text-left text-[10px]">
+          <table className="w-full min-w-[780px] text-left text-[0.85rem]">
             <thead>
               <tr className="border-b bg-muted/30 text-muted-foreground">
                 <th className="px-4 py-3">Course Title & Details</th>
@@ -95,7 +95,7 @@ export default function Courses() {
                         <p className="max-w-48 truncate font-semibold">
                           {capitalizeEachWord(c.title)}
                         </p>
-                        <p className="text-[9px] text-muted-foreground">
+                        <p className="text-[0.75rem] text-muted-foreground">
                           ID: {c._id}
                         </p>
                       </div>
@@ -146,7 +146,7 @@ export default function Courses() {
                                 console.log("Publish", c._id);
                                 setOpenMenu(null);
                               }}
-                              className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
+                              className="rounded px-2 py-1.5 text-left  hover:bg-muted"
                             >
                               Publish
                             </Button>
@@ -156,7 +156,7 @@ export default function Courses() {
                                 console.log("Mark pending", c._id);
                                 setOpenMenu(null);
                               }}
-                              className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
+                              className="rounded px-2 py-1.5 text-left  hover:bg-muted"
                             >
                               Mark pending
                             </Button>
@@ -166,7 +166,7 @@ export default function Courses() {
                                 console.log("Reject", c._id);
                                 setOpenMenu(null);
                               }}
-                              className="rounded px-2 py-1.5 text-left text-[10px] hover:bg-muted"
+                              className="rounded px-2 py-1.5 text-red-500 text-left  hover:text-red-600"
                             >
                               Reject
                             </Button>
