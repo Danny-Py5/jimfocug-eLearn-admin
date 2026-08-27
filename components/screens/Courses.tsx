@@ -6,24 +6,45 @@ import Heading from "../Heading";
 import FilterBar from "../utils/FilterBar";
 import { useCourses } from "@/lib/providers/CourseProvider";
 import { useMemo, useState } from "react";
-import { useUser } from "@/lib/providers/UserProvider";
+// import { useUser } from "@/lib/providers/UserProvider";
 import Button from "../Button";
 import { toast } from "sonner";
-import { CourseCategory, CourseStatus } from "@/enums";
+import { CourseAction, CourseCategory, CourseStatus } from "@/enums";
 import { capitalizeEachWord } from "@/lib/utils";
 import { Course } from "@/types";
+import Modal from "../Modal";
 
+interface ICourseActionStats {
+  id: string;
+  action: CourseAction;
+  isReject: boolean;
+  rejectionReason: string;
+  courseTitle: string;
+  isPublishing: boolean;
+  isMarkingPending: boolean;
+}
 export default function Courses() {
   const { courses } = useCourses();
-
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+
+  const [wantToReject, setWantToReject] = useState<boolean>();
+  const [isRejecting, setIsRejecting] = useState<boolean>();
+  const [courseActionStats, setCourseActionStats] =
+    useState<ICourseActionStats>({
+      id: "",
+      action: CourseAction.NULL,
+      isReject: false,
+      rejectionReason: "",
+      courseTitle: "",
+      isPublishing: false,
+      isMarkingPending: false,
+    });
 
   const [filters, setFilters] = useState({
     query: "",
     category: CourseCategory.ALL,
     status: CourseStatus.ALL,
   });
-  const user = useUser();
   const [page, setPage] = useState(1);
   // const [modal, setModal] = useState(false);
   const filtered = useMemo(
@@ -40,6 +61,33 @@ export default function Courses() {
     [courses, filters],
   );
   const rows = filtered.slice((page - 1) * 5, page * 5);
+
+  const handleCourseAction = async (action: ICourseActionStats) => {
+    // Simulate API request
+    console.log(action);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    toast.success(
+      `${action.courseTitle} ${action.action.replace("_", " ")} successful`,
+    );
+
+    resetCourseActionStats();
+    setOpenMenu(null);
+  };
+
+  const resetCourseActionStats = () => {
+    return setCourseActionStats((prev) => ({
+      ...prev,
+      id: "",
+      action: CourseAction.NULL,
+      isReject: false,
+      rejectionReason: "",
+      courseTitle: "",
+      isPublishing: false,
+      isMarkingPending: false,
+    }));
+  };
+
   return (
     <>
       <Heading
@@ -128,7 +176,15 @@ export default function Courses() {
                         }
                         className="rounded-md p-1 hover:bg-muted"
                       >
-                        <MoreVertical className="size-3.5 text-muted-foreground" />
+                        {courseActionStats.isPublishing &&
+                        courseActionStats.id === c._id ? (
+                          <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        ) : courseActionStats.isMarkingPending &&
+                          courseActionStats.id === c._id ? (
+                          <div className="size-4 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
+                        ) : (
+                          <MoreVertical className="size-3.5 text-muted-foreground" />
+                        )}
                       </button>
 
                       {openMenu === c._id && (
@@ -140,11 +196,24 @@ export default function Courses() {
                           />
 
                           {/* Menu */}
-                          <div className="absolute right-0 z-20 mt-1 flex w-32 flex-col rounded-lg border bg-card p-1 shadow-lg">
+                          <div className="absolute ${} right-0 z-20 mt-1 flex w-32 flex-col rounded-lg border bg-card p-1 shadow-lg">
                             <Button
-                              onClick={() => {
-                                console.log("Publish", c._id);
+                              onClick={async () => {
                                 setOpenMenu(null);
+                                const action: ICourseActionStats = {
+                                  id: c._id,
+                                  courseTitle: c.title,
+                                  action: CourseAction.PUBLISH,
+                                  isReject: false,
+                                  rejectionReason: "",
+                                  isPublishing: true,
+                                  isMarkingPending: false,
+                                };
+
+                                setCourseActionStats(action);
+                                console.log(courseActionStats);
+
+                                await handleCourseAction(action);
                               }}
                               className="rounded px-2 py-1.5 text-left  hover:bg-muted"
                             >
@@ -152,19 +221,40 @@ export default function Courses() {
                             </Button>
 
                             <Button
-                              onClick={() => {
-                                console.log("Mark pending", c._id);
+                              onClick={async () => {
                                 setOpenMenu(null);
+                                const action: ICourseActionStats = {
+                                  id: c._id,
+                                  courseTitle: c.title,
+                                  action: CourseAction.MARK_PENDING,
+                                  isReject: false,
+                                  rejectionReason: "",
+                                  isPublishing: false,
+                                  isMarkingPending: true,
+                                };
+
+                                setCourseActionStats(action);
+
+                                await handleCourseAction(action);
                               }}
                               className="rounded px-2 py-1.5 text-left  hover:bg-muted"
                             >
                               Mark pending
                             </Button>
-
                             <Button
                               onClick={() => {
-                                console.log("Reject", c._id);
                                 setOpenMenu(null);
+                                setWantToReject(true);
+
+                                setCourseActionStats({
+                                  id: c._id,
+                                  courseTitle: c.title,
+                                  action: CourseAction.REJECT,
+                                  isReject: true,
+                                  rejectionReason: "",
+                                  isPublishing: false,
+                                  isMarkingPending: false,
+                                });
                               }}
                               className="rounded px-2 py-1.5 text-red-500 text-left  hover:text-red-600"
                             >
@@ -182,6 +272,89 @@ export default function Courses() {
         </div>
         <Pager page={page} setPage={setPage} total={filtered.length} />
       </div>
+      {wantToReject && (
+        <Modal title="Reject Course" onClose={() => setWantToReject(false)}>
+          <div className="w-full space-y-5">
+            {/* Course */}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground">
+                Course
+              </p>
+              <p className="mt-1 text-sm font-semibold text-primary">
+                {courseActionStats.courseTitle}
+              </p>
+            </div>
+
+            {/* Warning */}
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+              <p className="text-sm font-medium text-destructive">
+                Rejecting this course
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                The instructor will need to address the reason for rejection
+                before the course can be approved.
+              </p>
+            </div>
+
+            {/* Reason */}
+            <div>
+              <label htmlFor="rejection-reason" className="text-sm font-medium">
+                Rejection reason
+              </label>
+
+              <textarea
+                id="rejection-reason"
+                onChange={(e) => {
+                  setCourseActionStats((prev) => {
+                    return {
+                      ...prev,
+                      rejectionReason: e.target.value,
+                    };
+                  });
+                }}
+                placeholder="Explain why this course is being rejected..."
+                className="mt-2 min-h-28 w-full resize-none rounded-lg border bg-background p-3 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
+              />
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                Please provide a clear reason so the instructor knows what needs
+                to be corrected.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 border-t pt-4">
+              <Button
+                type="button"
+                onClick={() => setWantToReject(false)}
+                className="px-4"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                type="button"
+                isDefault={true}
+                onClick={async () => {
+                  setIsRejecting(true);
+                  if (!courseActionStats.rejectionReason.trim()) {
+                    toast.error("Please provide a rejection reason");
+                    setIsRejecting(false);
+                    return;
+                  }
+
+                  await handleCourseAction(courseActionStats);
+                  setWantToReject(false);
+                  setIsRejecting(false);
+                }}
+                className="bg-destructive px-4 py-2 rounded-full text-white hover:bg-destructive/90"
+              >
+                {isRejecting ? "Rejecting..." : "Reject Course"}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
       {/* {modal && <AddCourse onClose={() => setModal(false)} />} */}
     </>
   );

@@ -12,3 +12,10 @@ export enum CourseCategory {
   ADVANCED = "advanced",
   EXPERT = "expert",
 }
+
+export enum CourseAction {
+  MARK_PENDING = "mark_pending",
+  PUBLISH = "publish",
+  REJECT = "reject",
+  NULL = "",
+}
