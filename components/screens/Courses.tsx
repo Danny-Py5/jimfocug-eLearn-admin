@@ -70,7 +70,7 @@ export default function Courses() {
       </div>
       <div className="mt-5 overflow-hidden rounded-xl border bg-card">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[780px] text-left text-[0.85rem]">
+          <table className="w-full min-w-[780px] text-left text-xs">
             <thead>
               <tr className="border-b bg-muted/30 text-muted-foreground">
                 <th className="px-4 py-3">Course Title & Details</th>
@@ -95,7 +95,7 @@ export default function Courses() {
                         <p className="max-w-48 truncate font-semibold">
                           {capitalizeEachWord(c.title)}
                         </p>
-                        <p className="text-[0.75rem] text-muted-foreground">
+                        <p className="text-[0.6rem] text-muted-foreground">
                           ID: {c._id}
                         </p>
                       </div>

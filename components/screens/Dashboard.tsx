@@ -178,10 +178,10 @@ export default function Dashboard() {
               <Icon className="size-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] text-muted-foreground">{label}</p>
+              <p className="text-[0.85rem] text-muted-foreground">{label}</p>
               <div className="flex items-center gap-2">
                 <p className="text-lg font-bold">{value}</p>
-                <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700">
+                <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[0.6rem] font-bold text-emerald-700">
                   {growth}
                 </span>
               </div>
@@ -200,11 +200,11 @@ export default function Dashboard() {
                   (Last 12 Months)
                 </span>
               </h2>
-              <p className="mt-1 text-[10px] text-muted-foreground">
+              <p className="mt-1 text-[0.9rem] text-muted-foreground">
                 Monthly student enrollment across all courses
               </p>
             </div>
-            <button className="rounded-lg border px-3 py-2 text-[10px] text-muted-foreground">
+            <button className="rounded-lg border px-3 py-2 text-[0.8rem] text-muted-foreground">
               Year 2026
             </button>
           </div>
@@ -236,7 +236,7 @@ export default function Dashboard() {
             >
               <div className="flex size-20 flex-col items-center justify-center rounded-full bg-card">
                 <strong className="text-lg">100%</strong>
-                <span className="text-[9px] text-muted-foreground">
+                <span className="text-[0.7rem] text-muted-foreground">
                   Allocated
                 </span>
               </div>
@@ -245,7 +245,7 @@ export default function Dashboard() {
               {categories.slice(0, 4).map((item, index) => (
                 <div
                   key={item.name}
-                  className="flex items-center justify-between gap-2 text-[10px]"
+                  className="flex items-center justify-between gap-2 text-sm"
                 >
                   <span className="flex items-center gap-2 truncate">
                     <i
@@ -265,19 +265,19 @@ export default function Dashboard() {
       <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]">
         <section className="rounded-xl border bg-card p-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold">Recent Course Submissions</h2>
+            <h2 className="font-bold">Recent Course Submissions</h2>
             <Button
               onClick={() => {
                 toast.info("Not implemented. Contact the developer");
                 console.log("Navigate to courses");
               }}
-              className="text-[10px] font-semibold text-primary"
+              className="text-xs font-semibold text-primary"
             >
               View All Approvals
             </Button>
           </div>
           <div className="mt-4 overflow-x-auto">
-            <table className="w-full min-w-[500px] text-left text-[10px]">
+            <table className="w-full min-w-[500px] text-left text-xs">
               <thead className="text-muted-foreground">
                 <tr className="border-b">
                   <th className="pb-2">Course Title</th>
@@ -315,7 +315,7 @@ export default function Dashboard() {
 
         {/* top performing courses */}
         <section className="rounded-xl border bg-card p-4 shadow-sm">
-          <h2 className="text-sm font-bold">Top Performing Courses</h2>
+          <h2 className="font-bold">Top Performing Courses</h2>
           <div className="mt-4 flex flex-col gap-2">
             {fallbackTopCourses.map((course) => (
               <div
@@ -323,15 +323,15 @@ export default function Dashboard() {
                 className="flex items-center gap-3 rounded-lg bg-muted/40 p-2"
               >
                 <span
-                  className={`flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[9px] font-bold text-primary`}
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-xs font-bold text-primary`}
                 >
                   {course.code}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[10px] font-semibold">
+                  <p className="truncate text-xs font-semibold">
                     {capitalizeEachWord(course.title)}
                   </p>
-                  <p className="text-[9px] text-muted-foreground">
+                  <p className="text-[10px] text-muted-foreground">
                     {course.students.toLocaleString()}{" "}
                     {course.students < 2 ? "student" : "students"} ·{" "}
                     {course.category}
