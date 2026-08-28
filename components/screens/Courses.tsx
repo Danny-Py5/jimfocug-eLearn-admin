@@ -9,7 +9,12 @@ import { useMemo, useState } from "react";
 // import { useUser } from "@/lib/providers/UserProvider";
 import Button from "../Button";
 import { toast } from "sonner";
-import { CourseAction, CourseCategory, CourseStatus } from "@/enums";
+import {
+  CourseAction,
+  CourseCategory,
+  CourseStatus,
+  FilterBarType,
+} from "@/enums";
 import { capitalizeEachWord } from "@/lib/utils";
 import { Course } from "@/types";
 import Modal from "../Modal";
@@ -140,9 +145,13 @@ export default function Courses() {
       />
       <div className="mt-5">
         <FilterBar
-          type="courses"
-          onChange={(query, category: CourseCategory, status: CourseStatus) => {
-            setFilters({ query, category, status });
+          type={FilterBarType.COURSE}
+          onChange={(query, category, status) => {
+            setFilters({
+              query,
+              category: category as CourseCategory,
+              status: status as CourseStatus,
+            });
             setPage(1);
           }}
           onClear={() => {
