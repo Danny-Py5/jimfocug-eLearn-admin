@@ -7,17 +7,21 @@ import Pager from "@/components/utils/Pager";
 import Avatar from "@/components/Avatar";
 import Heading from "@/components/Heading";
 
-import { UserRole } from "@/types";
+// import { UserRole } from "@/types";
 import UserShimmer from "../UserShimmer";
 import { useUsers } from "@/lib/providers/UsersProvider";
+import { EUserRole, FilterBarType, UserStatus } from "@/enums";
+import Button from "../Button";
 
 export default function UsersPage() {
   const { users, isLoading, error, refetchUsers } = useUsers();
-  const [role, setRole] = useState<UserRole>("USER");
-  const [filters, setFilters] = useState({
-    query: "",
-    status: "ALL",
-  });
+  const [role, setRole] = useState<EUserRole>(EUserRole.STUDENT);
+  const [filters, setFilters] = useState<{ query: string; status: UserStatus }>(
+    {
+      query: "",
+      status: UserStatus.ALL,
+    },
+  );
   const [page, setPage] = useState(1);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -30,28 +34,26 @@ export default function UsersPage() {
       `${user.fullName} ${user.username} ${user.email}`
         .toLowerCase()
         .includes(filters.query.toLowerCase()) &&
-      (filters.status === "ALL" ||
-        user.status?.toLowerCase() === filters.status.toLowerCase()),
+      (filters.status === UserStatus.ALL || user.status === filters.status),
   );
-
-  const rows = users.slice((page - 1) * 5, page * 5);
+  const rows = filtered.slice((page - 1) * 5, page * 5);
 
   const getTitle = () => {
     switch (role) {
-      case "TUTOR":
+      case EUserRole.TUTOR:
         return "All Tutors";
-      case "ADMIN":
+      case EUserRole.ADMIN:
         return "All Admins";
       default:
         return "All Students";
     }
   };
 
-  const getRoleLabel = (role: UserRole) => {
+  const getRoleLabel = (role: EUserRole) => {
     switch (role) {
-      case "TUTOR":
+      case EUserRole.TUTOR:
         return "Tutor";
-      case "ADMIN":
+      case EUserRole.ADMIN:
         return "Admin";
       default:
         return "Student";
@@ -101,8 +103,8 @@ export default function UsersPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          {(["USER", "TUTOR", "ADMIN"] as UserRole[]).map((r) => (
-            <button
+          {[EUserRole.ADMIN, EUserRole.STUDENT, EUserRole.TUTOR].map((r) => (
+            <Button
               key={r}
               onClick={() => {
                 setRole(r);
@@ -114,21 +116,28 @@ export default function UsersPage() {
                   : "bg-card text-muted-foreground"
               }`}
             >
-              {r === "USER" ? "Students" : r === "TUTOR" ? "Tutors" : "Admins"}
-            </button>
+              {r === EUserRole.STUDENT
+                ? "Students"
+                : r === EUserRole.TUTOR
+                  ? "Tutors"
+                  : "Admins"}
+            </Button>
           ))}
         </div>
       </div>
 
       <div className="mt-5">
         <FilterBar
-          type="people"
+          type={FilterBarType.USER}
           onChange={(query, _category, status) => {
-            setFilters({ query, status });
+            setFilters({
+              query,
+              status: status as UserStatus,
+            });
             setPage(1);
           }}
           onClear={() => {
-            setFilters({ query: "", status: "ALL" });
+            setFilters({ query: "", status: UserStatus.ALL });
             setPage(1);
           }}
         />
@@ -162,10 +171,10 @@ export default function UsersPage() {
               <tr className="border-b bg-muted/30 text-muted-foreground">
                 <th className="px-4 py-3">{getRoleLabel(role)}</th>
                 <th className="px-2 py-3">
-                  {role === "TUTOR" ? "Course" : "Email"}
+                  {role === EUserRole.TUTOR ? "Course" : "Email"}
                 </th>
                 <th className="px-2 py-3">
-                  {role === "TUTOR" ? "Students" : "Joined"}
+                  {role === EUserRole.TUTOR ? "Students" : "Joined"}
                 </th>
                 <th className="px-2 py-3">Status</th>
                 <th className="px-4 py-3">Actions</th>
@@ -192,22 +201,23 @@ export default function UsersPage() {
                     </div>
                   </td>
                   <td className="px-2 py-3">
-                    {role === "TUTOR"
+                    {role === EUserRole.TUTOR
                       ? user.purchasedCourses?.length || 0
                       : user.email}
                   </td>
                   <td className="px-2 py-3">
-                    {role === "TUTOR"
+                    {role === EUserRole.TUTOR
                       ? "N/A"
                       : new Date(user.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-2 py-3">
-                    <Status value={user.isVerified ? "Verified" : "Pending"} />
+                    <Status value={user.status} />
                   </td>
+
                   <td className="px-4 py-3">
                     <button
                       onClick={() =>
-                        setOpenMenu(openMenu === user.id ? null : user.id)
+                        setOpenMenu(openMenu === user._id ? null : user._id)
                       }
                       className="rounded-md p-1 hover:bg-muted"
                     >

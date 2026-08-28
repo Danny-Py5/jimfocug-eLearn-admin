@@ -1,4 +1,4 @@
-import { CourseCategory, CourseStatus } from "./enums";
+import { CourseCategory, CourseStatus, EUserRole, UserStatus } from "./enums";
 
 export interface ButtonProps {
   children: React.ReactNode;
@@ -38,7 +38,7 @@ export interface User {
   fullName: string;
   email: string;
   phoneNumber: string;
-  role: UserRole;
+  role: EUserRole;
   isVerified: boolean;
   profilePictureUrl: string;
   profilePicturePublicId: string;
@@ -47,7 +47,8 @@ export interface User {
   refreshToken?: string;
   createdAt: string;
   updatedAt: string;
-  status: string;
+
+  status: UserStatus; // not available from backend
 }
 
 export interface UserLogin {
