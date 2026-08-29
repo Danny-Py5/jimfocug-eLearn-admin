@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, MoreVertical, Plus } from "lucide-react";
+import { Download, LoaderCircle, MoreVertical, Plus } from "lucide-react";
 import { toast } from "sonner";
 import FilterBar from "@/components/utils/FilterBar";
 import Status from "@/components/utils/Status";
@@ -14,6 +14,7 @@ import { EUserRole, FilterBarType, UserStatus } from "@/enums";
 import Button from "../Button";
 import Modal from "../Modal";
 import { User } from "@/types";
+import { interceptorFetch } from "@/lib/interceptor-fetch";
 import { capitalizeEachWord } from "@/lib/utils";
 
 export default function UsersPage() {
@@ -31,6 +32,7 @@ export default function UsersPage() {
   } | null>(null);
   const [page, setPage] = useState(1);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [isChangingRole, setIsChangingRole] = useState<boolean>(false);
 
   // Filter users by role
   const roleUsers = users.filter((user) => user.role === role);
@@ -64,6 +66,43 @@ export default function UsersPage() {
         return "Admin";
       default:
         return "Student";
+    }
+  };
+
+  const handleChangeUserRole = async () => {
+    if (!selectedAction) return;
+    setIsChangingRole(true);
+
+    try {
+      const response = await interceptorFetch(
+        `/api/users/${selectedAction.user._id}/change-role`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            role: selectedAction.action,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log({ data });
+        toast.error(data.msg || "Failed to change user role");
+        return;
+      }
+
+      console.log("Role changed:", data);
+
+      toast.success("User role updated successfully");
+
+      setSelectedAction(null);
+      await refetchUsers(); // remove it bro | use local ways (setUsers)
+    } catch (error) {
+      console.error("Change user role error:", error);
+      toast.error("Request failed");
+    } finally {
+      setIsChangingRole(false);
     }
   };
 
@@ -110,7 +149,7 @@ export default function UsersPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          {[EUserRole.ADMIN, EUserRole.STUDENT, EUserRole.TUTOR].map((r) => (
+          {Object.values(EUserRole).map((r) => (
             <Button
               key={r}
               onClick={() => {
@@ -370,16 +409,18 @@ export default function UsersPage() {
               </Button>
 
               <Button
-                onClick={() => {
-                  // API will be connected later
-                }}
+                onClick={handleChangeUserRole}
                 className={`rounded-lg px-4 py-2 text-xs text-primary-foreground ${
                   selectedAction.action === "admin"
                     ? "bg-orange-600 hover:bg-orange-700"
                     : "bg-primary"
                 }`}
               >
-                Continue
+                {isChangingRole ? (
+                  <LoaderCircle className="size-4 animate-spin text-white" />
+                ) : (
+                  "Continue"
+                )}
               </Button>
             </div>
           </div>
