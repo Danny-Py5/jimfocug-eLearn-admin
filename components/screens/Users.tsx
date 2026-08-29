@@ -12,6 +12,9 @@ import UserShimmer from "../UserShimmer";
 import { useUsers } from "@/lib/providers/UsersProvider";
 import { EUserRole, FilterBarType, UserStatus } from "@/enums";
 import Button from "../Button";
+import Modal from "../Modal";
+import { User } from "@/types";
+import { capitalizeEachWord } from "@/lib/utils";
 
 export default function UsersPage() {
   const { users, isLoading, error, refetchUsers } = useUsers();
@@ -22,6 +25,10 @@ export default function UsersPage() {
       status: UserStatus.ALL,
     },
   );
+  const [selectedAction, setSelectedAction] = useState<{
+    user: User;
+    action: "user" | "tutor" | "admin";
+  } | null>(null);
   const [page, setPage] = useState(1);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -215,14 +222,69 @@ export default function UsersPage() {
                   </td>
 
                   <td className="px-4 py-3">
-                    <button
-                      onClick={() =>
-                        setOpenMenu(openMenu === user._id ? null : user._id)
-                      }
-                      className="rounded-md p-1 hover:bg-muted"
-                    >
-                      <MoreVertical className="size-3.5 text-muted-foreground" />
-                    </button>
+                    <div className="absolute">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenMenu(openMenu === user._id ? null : user._id)
+                        }
+                        className="rounded-md p-1 hover:bg-muted"
+                      >
+                        <MoreVertical className="size-3.5 text-muted-foreground" />
+                      </button>
+
+                      {openMenu === user._id && (
+                        <>
+                          {/* Click outside */}
+                          <div
+                            className="fixed inset-0 z-10"
+                            onClick={() => setOpenMenu(null)}
+                          />
+
+                          {/* Menu */}
+                          <div className="absolute ${} right-0 z-20 mt-1 flex w-32 flex-col rounded-lg border bg-card p-1 shadow-lg">
+                            <Button
+                              onClick={() => {
+                                setOpenMenu(null);
+                                setSelectedAction({
+                                  user,
+                                  action: "user",
+                                });
+                              }}
+                              className="rounded px-2 py-1.5 text-left hover:bg-muted"
+                            >
+                              Make User
+                            </Button>
+
+                            <Button
+                              onClick={() => {
+                                setOpenMenu(null);
+                                setSelectedAction({
+                                  user,
+                                  action: "tutor",
+                                });
+                              }}
+                              className="rounded px-2 py-1.5 text-left hover:bg-muted"
+                            >
+                              Make Tutor
+                            </Button>
+
+                            <Button
+                              onClick={() => {
+                                setOpenMenu(null);
+                                setSelectedAction({
+                                  user,
+                                  action: "admin",
+                                });
+                              }}
+                              className="rounded px-2 py-1.5 text-left text-orange-500 hover:text-orange-600"
+                            >
+                              Make Admin
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -231,6 +293,98 @@ export default function UsersPage() {
         </div>
         <Pager page={page} setPage={setPage} total={filtered.length} />
       </div>
+      {selectedAction && (
+        <Modal
+          title={
+            selectedAction.action === "admin"
+              ? "Make User an Admin?"
+              : selectedAction.action === "tutor"
+                ? "Make User a Tutor?"
+                : "Make User a Regular User?"
+          }
+          onClose={() => setSelectedAction(null)}
+        >
+          <div className="space-y-5">
+            <p className="text-muted-foreground">
+              You are about to change{" "}
+              <span className="font-semibold text-foreground">
+                {capitalizeEachWord(selectedAction.user.fullName)}
+              </span>{" "}
+              to{" "}
+              <span className="font-semibold text-foreground">
+                {selectedAction.action === "admin"
+                  ? "an administrator"
+                  : selectedAction.action === "tutor"
+                    ? "a tutor"
+                    : "a regular user"}
+              </span>
+              .
+            </p>
+
+            <div
+              className={`rounded-lg bg-muted/50 p-4 ${selectedAction.action === "admin" ? "rounded-xl border border-orange-500/20 bg-orange-500/5 px-4 py-3.5" : ""}`}
+            >
+              {selectedAction.action === "admin" && (
+                <div className="">
+                  <p className="font-medium text-orange-600 dark:text-orange-400">
+                    Administrator access
+                  </p>
+
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Administrators can manage users, courses, tests, and other
+                    administrative resources.{" "}
+                    <span className="text-teal-400/60 font-semibold">
+                      Only give this role to trusted users.
+                    </span>
+                  </p>
+                </div>
+              )}
+
+              {selectedAction.action === "tutor" && (
+                <>
+                  <p className="font-medium">Tutor access</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Tutors can access tutor-specific features and manage their
+                    created courses and learning content.
+                  </p>
+                </>
+              )}
+
+              {selectedAction.action === "user" && (
+                <>
+                  <p className="font-medium">Regular user access</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    This will remove elevated tutor or administrator access and
+                    return the account to a regular user role.
+                  </p>
+                </>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                onClick={() => setSelectedAction(null)}
+                className="rounded-lg border px-4 py-2 text-xs"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                onClick={() => {
+                  // API will be connected later
+                }}
+                className={`rounded-lg px-4 py-2 text-xs text-primary-foreground ${
+                  selectedAction.action === "admin"
+                    ? "bg-orange-600 hover:bg-orange-700"
+                    : "bg-primary"
+                }`}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }
