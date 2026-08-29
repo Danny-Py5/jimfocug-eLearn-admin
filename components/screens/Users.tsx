@@ -235,11 +235,13 @@ export default function UsersPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Avatar
-                        name={user.fullName}
+                        name={capitalizeEachWord(user.fullName)}
                         imageUrl={user.profilePictureUrl}
                       />
                       <div>
-                        <p className="font-semibold">{user.fullName}</p>
+                        <p className="font-semibold">
+                          {capitalizeEachWord(user.fullName)}
+                        </p>
                         <p className="text-[9px] text-muted-foreground">
                           @{user.username}
                         </p>
